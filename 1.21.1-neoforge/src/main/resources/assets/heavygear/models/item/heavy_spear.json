@@ -2,5 +2,13 @@
   "parent": "minecraft:item/generated",
   "textures": {
     "layer0": "heavygear:item/heavy_spear"
-  }
+  },
+  "overrides": [
+    {
+      "predicate": {
+        "spears:in_gui": 0
+      },
+      "model": "heavygear:item/heavy_spear_in_hand"
+    }
+  ]
 }

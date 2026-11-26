@@ -2,5 +2,13 @@
   "parent": "minecraft:item/generated",
   "textures": {
     "layer0": "heavygear:item/longinus_trident_icon"
-  }
+  },
+  "overrides": [
+    {
+      "predicate": {
+        "spears:in_gui": 0
+      },
+      "model": "heavygear:item/lance_of_longinus_in_hand"
+    }
+  ]
 }

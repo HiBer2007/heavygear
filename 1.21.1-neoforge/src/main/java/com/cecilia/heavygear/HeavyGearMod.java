@@ -123,7 +123,7 @@ public final class HeavyGearMod {
             .build("heavy_arrow");
 
     public static final Item HEAVY_SPEAR =
-            new com.cecilia.heavygear.item.HeavySpearItem(spearProperties());
+            new com.cecilia.heavygear.item.HeavySpearItem(net.minecraft.world.item.Tiers.NETHERITE, spearProperties());
     public static final Item LONGINUS_SPEAR = new LonginusSpearItem(spearProperties());
     public static final Item HEAVY_UPGRADE_SMITHING_TEMPLATE =
             new com.cecilia.heavygear.item.HeavyUpgradeTemplateItem();
@@ -131,16 +131,14 @@ public final class HeavyGearMod {
             new com.cecilia.heavygear.item.TridentUpgradeTemplateItem();
 
     /**
-     * 1.21.1 has no spear item family, so the spear uses the trident's combat numbers (8 attack
-     * damage, -2.9 attack speed) and tool component to stay a proper two-handed polearm; the smash
-     * attack itself is inherited from {@code MaceItem}.
+     * 1.21.1 has no spear item family: the spear components (piercing stab, kinetic charge attack,
+     * reach, sounds, model) are copied from the Backported Spears mod's {@code minecraft:netherite_spear}
+     * by {@code SpearComponents} once every mod has registered its items, so only the tier, the
+     * rarity and the fire resistance are set here.
      */
     private static Item.Properties spearProperties() {
         return new Item.Properties()
                 .rarity(Rarity.EPIC)
-                .durability(2031)
-                .attributes(TridentItem.createAttributes())
-                .component(net.minecraft.core.component.DataComponents.TOOL, TridentItem.createToolProperties())
                 .fireResistant();
     }
 
@@ -148,6 +146,7 @@ public final class HeavyGearMod {
         registerContent();
         modEventBus.addListener(this::registerPayloads);
         modEventBus.addListener(this::addVanillaTabEntries);
+        modEventBus.addListener(com.cecilia.heavygear.item.SpearComponents::copyFromVanillaSpear);
         NeoForge.EVENT_BUS.addListener(this::addBrewingRecipes);
     }
 
@@ -246,7 +245,13 @@ public final class HeavyGearMod {
         CreativeModeTab.TabVisibility visible = CreativeModeTab.TabVisibility.PARENT_AND_SEARCH_TABS;
         ResourceKey<CreativeModeTab> key = event.getTabKey();
         if (key == CreativeModeTabs.COMBAT) {
-            event.insertAfter(new ItemStack(Items.TRIDENT), new ItemStack(HEAVY_SPEAR), visible);
+            // the heavy spear belongs behind the netherite spear (Backported Spears), and the lance
+            // right in front of the mace, like the 1.21.11 spear family
+            Item netheriteSpear = BuiltInRegistries.ITEM
+                    .getOptional(ResourceLocation.withDefaultNamespace("netherite_spear"))
+                    .orElse(Items.AIR);
+            Item spearAnchor = netheriteSpear == Items.AIR ? Items.TRIDENT : netheriteSpear;
+            event.insertAfter(new ItemStack(spearAnchor), new ItemStack(HEAVY_SPEAR), visible);
             event.insertBefore(new ItemStack(Items.MACE), new ItemStack(LONGINUS_SPEAR), visible);
             event.insertAfter(new ItemStack(Items.NETHERITE_SWORD), new ItemStack(HeavyGear.HEAVY_SWORD), visible);
             event.insertAfter(new ItemStack(Items.NETHERITE_AXE), new ItemStack(HeavyGear.HEAVY_AXE), visible);

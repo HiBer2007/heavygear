@@ -2,7 +2,6 @@ package com.cecilia.heavygear.item;
 
 import java.util.List;
 
-import com.cecilia.heavygear.combat.RiptideContact;
 import com.cecilia.heavygear.enchant.HeavyGearEnchantments;
 
 import net.minecraft.ChatFormatting;
@@ -15,14 +14,11 @@ import net.minecraft.stats.Stats;
 import net.minecraft.util.Mth;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResultHolder;
-import net.minecraft.world.damagesource.DamageSource;
-import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.MoverType;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.TooltipFlag;
-import net.minecraft.world.item.UseAnim;
 import net.minecraft.world.item.enchantment.EnchantmentEffectComponents;
 import net.minecraft.world.item.enchantment.EnchantmentHelper;
 import net.minecraft.world.item.enchantment.Enchantments;
@@ -32,14 +28,10 @@ import net.minecraft.world.phys.Vec3;
 /**
  * Spear of Longinus. Two modes, toggled with the configured key:
  * <ul>
- *   <li>Normal mode: the smash / charged attack only. No Riptide, cannot be thrown.</li>
- *   <li>Trident mode: the smash attack still works; Riptide (in water/rain) runs the vanilla dash on
- *       release, and without Riptide the spear is thrown on release.</li>
+ *   <li>Normal mode: the spear's own piercing stab and kinetic charge attack.</li>
+ *   <li>Trident mode: Riptide (in water/rain) runs the vanilla trident dash on release, and without
+ *       Riptide the spear is thrown on release.</li>
  * </ul>
- *
- * <p>1.21.1 has no spear item family, so the vanilla trident's charge/dash numbers are reproduced
- * here (see {@code TridentItem#releaseUsing}): 8.0 dash damage, 2.5 throw power, 10 tick minimum
- * charge before a riptide launch.</p>
  */
 public class LonginusSpearItem extends HeavySpearItem {
     /** 70% of the vanilla trident's 10 tick charge, in ticks. */
@@ -47,17 +39,7 @@ public class LonginusSpearItem extends HeavySpearItem {
     public static final float SHOOT_POWER = 2.5F;
 
     public LonginusSpearItem(Properties properties) {
-        super(properties);
-    }
-
-    @Override
-    public int getUseDuration(ItemStack stack, LivingEntity entity) {
-        return 72000;
-    }
-
-    @Override
-    public UseAnim getUseAnimation(ItemStack stack) {
-        return UseAnim.SPEAR;
+        super(net.minecraft.world.item.Tiers.NETHERITE, properties);
     }
 
     private static boolean riptide(ItemStack stack) {
@@ -67,15 +49,14 @@ public class LonginusSpearItem extends HeavySpearItem {
     @Override
     public InteractionResultHolder<ItemStack> use(Level level, Player player, InteractionHand hand) {
         ItemStack stack = player.getItemInHand(hand);
+        if (LonginusMode.isTrident(stack) && riptide(stack) && !player.isInWaterOrRain()) {
+            // Riptide only works in water or rain; the dash would fizzle out.
+            return InteractionResultHolder.fail(stack);
+        }
         if (stack.getDamageValue() >= stack.getMaxDamage() - 1) {
             return InteractionResultHolder.fail(stack);
         }
-        if (LonginusMode.isTrident(stack) && riptide(stack) && !player.isInWaterOrRain()) {
-            // Riptide only works in water or rain; without it this would be a normal stab.
-            return InteractionResultHolder.fail(stack);
-        }
-        player.startUsingItem(hand);
-        return InteractionResultHolder.consume(stack);
+        return super.use(level, player, hand);
     }
 
     @Override
@@ -84,7 +65,7 @@ public class LonginusSpearItem extends HeavySpearItem {
             return;
         }
         if (!LonginusMode.isTrident(stack) || !riptide(stack) || !player.isInWaterOrRain()) {
-            // normal mode / charged smash: nothing to release, the throw is client driven
+            // normal mode / kinetic charge: nothing to release, the throw is client driven
             return;
         }
         int charge = this.getUseDuration(stack, entity) - timeLeft;
@@ -120,27 +101,6 @@ public class LonginusSpearItem extends HeavySpearItem {
             level.playSound(null, player, sound.value(), SoundSource.PLAYERS, 1.0F, 1.0F);
         }
         player.awardStat(Stats.ITEM_USED.get(this));
-    }
-
-    /**
-     * The riptide dash contact hit must behave like a vanilla trident (plain contact damage, no mace
-     * smash), while charged attacks keep their smash - hence the narrow {@link RiptideContact} bracket.
-     */
-    @Override
-    public float getAttackDamageBonus(Entity target, float damage, DamageSource source) {
-        if (RiptideContact.isActive()) {
-            return 0.0F;
-        }
-        return super.getAttackDamageBonus(target, damage, source);
-    }
-
-    /** Same for the smash feedback (sound, particles, impulse) of the dash contact hit. */
-    @Override
-    public boolean hurtEnemy(ItemStack stack, LivingEntity target, LivingEntity attacker) {
-        if (RiptideContact.isActive()) {
-            return true;
-        }
-        return super.hurtEnemy(stack, target, attacker);
     }
 
     /** Shows the current mode in the item tooltip (same wording / colours as the toggle message). */

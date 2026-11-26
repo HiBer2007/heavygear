@@ -127,4 +127,50 @@ public final class HeavySmash {
             }
         }
     }
+
+    /**
+     * Smash bonus for a spear stab (the Backported Spears mod runs the stab itself): the same mace
+     * curve a swing of the same fall height would use, plus Density from the spear. Gliding does not
+     * count as falling, so a dive needs the dive bombing enchantment and the tracked descent instead.
+     *
+     * @return the extra damage to add to the stab, or 0 when this is not a smash
+     */
+    public static float stabSmashBonus(LivingEntity attacker) {
+        float fall;
+        if (attacker.isFallFlying()) {
+            if (HeavyGearEnchantments.diveBombingLevel(attacker.getWeaponItem()) <= 0) {
+                return 0.0F;
+            }
+            double descended = DiveTracker.descended(attacker);
+            if (descended < 1.5) {
+                return 0.0F;
+            }
+            cancelFirework(attacker);
+            fall = (float) Math.min(descended, 20.0);
+        } else if (attacker.fallDistance > 1.5F) {
+            fall = Math.min(attacker.fallDistance, 20.0F);
+        } else {
+            return 0.0F;
+        }
+        float bonus = maceCurve(fall);
+        if (attacker.level() instanceof ServerLevel level) {
+            var source = attacker instanceof net.minecraft.world.entity.player.Player player
+                    ? level.damageSources().playerAttack(player)
+                    : level.damageSources().mobAttack(attacker);
+            bonus += net.minecraft.world.item.enchantment.EnchantmentHelper.modifyFallBasedDamage(
+                    level, attacker.getWeaponItem(), attacker, source, 0.0F) * fall;
+        }
+        return bonus;
+    }
+
+    /** Vanilla mace smash bonus curve: 4·d up to 3, 12+2·(d-3) up to 8, 22+(d-8) above. */
+    public static float maceCurve(double distance) {
+        if (distance <= 3.0D) {
+            return (float) (4.0D * distance);
+        }
+        if (distance <= 8.0D) {
+            return (float) (12.0D + 2.0D * (distance - 3.0D));
+        }
+        return (float) (22.0D + (distance - 8.0D));
+    }
 }

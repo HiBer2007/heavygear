@@ -1,50 +1,70 @@
 package com.cecilia.heavygear.item;
 
-import com.cecilia.heavygear.mixin.FireworkRocketAccessor;
-
-import net.minecraft.server.level.ServerLevel;
+import net.minecraft.core.BlockPos;
+import net.minecraft.world.InteractionHand;
+import net.minecraft.world.InteractionResultHolder;
+import net.minecraft.world.entity.Entity;
+import net.minecraft.world.entity.EquipmentSlot;
 import net.minecraft.world.entity.LivingEntity;
-import net.minecraft.world.entity.projectile.FireworkRocketEntity;
+import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.item.MaceItem;
-import net.minecraft.world.phys.AABB;
+import net.minecraft.world.item.Tier;
+import net.minecraft.world.item.TieredItem;
+import net.minecraft.world.level.Level;
+import net.minecraft.world.level.block.state.BlockState;
 
 /**
- * Heavy spear. The 1.21.1 build keeps the mace smash attack (the spear is a two-handed smash weapon)
- * and the dive bonus, which is folded into the vanilla smash calculation by
- * {@code DiveSmashDamageMixin} so damage enchantments keep working.
+ * Heavy spear.
+ *
+ * <p>1.21.1 has no spear item family. The port therefore uses the Backported Spears mod
+ * ({@code spears}): {@link SpearComponents} copies the {@code netherite_spear} components
+ * ({@code minecraft:piercing_weapon}, {@code kinetic_weapon}, {@code attack_range},
+ * {@code swing_animation}, {@code use_effects}, {@code minimum_attack_charge}, the attributes) onto
+ * this item, which turns it into a real spear - piercing stab, kinetic charge attack, reach, spear
+ * sounds, spear model and the Lunge enchantment hook. This class only reproduces the item level
+ * behaviour that the backport's own spear items declare.</p>
  */
-public class HeavySpearItem extends MaceItem {
-    public HeavySpearItem(Item.Properties properties) {
-        super(properties);
+public class HeavySpearItem extends TieredItem {
+    public HeavySpearItem(Tier tier, Item.Properties properties) {
+        super(tier, properties);
+    }
+
+    /**
+     * The backport's spear model predicate ({@code spears:in_gui}) renders the {@code *_in_hand} model
+     * whenever the held stack carries an entity representation, so a selected spear has to register
+     * its holder every tick - exactly what the backport's own spear items do.
+     */
+    @Override
+    public void inventoryTick(ItemStack stack, Level level, Entity entity, int slotId, boolean isSelected) {
+        stack.setEntityRepresentation(isSelected ? entity : null);
+        super.inventoryTick(stack, level, entity, slotId, isSelected);
+    }
+
+    @Override
+    public boolean canAttackBlock(BlockState state, Level level, BlockPos pos, Player player) {
+        return !player.isCreative();
     }
 
     @Override
     public boolean hurtEnemy(ItemStack stack, LivingEntity target, LivingEntity attacker) {
-        boolean diving = attacker.isFallFlying()
-                && com.cecilia.heavygear.enchant.HeavyGearEnchantments.diveBombingLevel(stack) > 0
-                && com.cecilia.heavygear.dive.DiveTracker.descended(attacker) >= 1.5;
-        float savedFallDistance = attacker.fallDistance;
-        if (diving) {
-            cancelFireworkBoost(attacker);
-            attacker.fallDistance = (float) Math.min(
-                    com.cecilia.heavygear.dive.DiveTracker.descended(attacker), 20.0);
-        }
-        boolean result = super.hurtEnemy(stack, target, attacker);
-        attacker.fallDistance = savedFallDistance;
-        return result;
+        return true;
     }
 
-    private static void cancelFireworkBoost(LivingEntity attacker) {
-        if (!(attacker.level() instanceof ServerLevel level)) {
-            return;
-        }
-        AABB box = attacker.getBoundingBox().inflate(8.0);
-        for (FireworkRocketEntity rocket : level.getEntitiesOfClass(FireworkRocketEntity.class, box)) {
-            if (((FireworkRocketAccessor) rocket).heavygear$attachedTo() == attacker) {
-                rocket.discard();
-            }
-        }
+    @Override
+    public void postHurtEnemy(ItemStack stack, LivingEntity target, LivingEntity attacker) {
+        stack.hurtAndBreak(1, attacker, EquipmentSlot.MAINHAND);
+    }
+
+    /** Starts the kinetic charge attack; the Backported Spears mod drives the rest. */
+    @Override
+    public InteractionResultHolder<ItemStack> use(Level level, Player player, InteractionHand hand) {
+        player.startUsingItem(hand);
+        return InteractionResultHolder.consume(player.getItemInHand(hand));
+    }
+
+    @Override
+    public int getUseDuration(ItemStack stack, LivingEntity entity) {
+        return 72000;
     }
 }

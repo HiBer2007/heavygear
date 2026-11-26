@@ -1,0 +1,12 @@
+{
+  "required": false,
+  "minVersion": "0.8",
+  "package": "com.cecilia.heavygear.mixin",
+  "compatibilityLevel": "JAVA_21",
+  "mixins": [
+    "SpearStabSmashMixin"
+  ],
+  "injectors": {
+    "defaultRequire": 1
+  }
+}

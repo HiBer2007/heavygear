@@ -16,6 +16,9 @@ config = "heavygear.mixins.json"
 [[mixins]]
 config = "heavygear.client.mixins.json"
 
+[[mixins]]
+config = "heavygear.spears.mixins.json"
+
 [[dependencies.${mod_id}]]
 modId = "neoforge"
 type = "required"
@@ -27,5 +30,14 @@ side = "BOTH"
 modId = "minecraft"
 type = "required"
 versionRange = "${minecraft_version_range}"
+ordering = "NONE"
+side = "BOTH"
+
+# 1.21.1 has no spear item family; the heavy spear and the Spear of Longinus take their spear
+# components from this backport (see SpearComponents), so it is a hard requirement.
+[[dependencies.${mod_id}]]
+modId = "spears"
+type = "required"
+versionRange = "[1.0.0,)"
 ordering = "NONE"
 side = "BOTH"

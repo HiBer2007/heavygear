@@ -1,5 +1,5 @@
 {
-  "parent": "minecraft:item/handheld",
+  "parent": "minecraft:item/spear_in_hand",
   "textures": {
     "layer0": "heavygear:item/lance_of_longinus_in_hand"
   }
