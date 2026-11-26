@@ -1,0 +1,16 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "equipment",
+  "key": {
+    "R": "minecraft:breeze_rod",
+    "C": "minecraft:heavy_core"
+  },
+  "pattern": [
+    "R",
+    "C"
+  ],
+  "result": {
+    "count": 1,
+    "id": "heavygear:ecam"
+  }
+}

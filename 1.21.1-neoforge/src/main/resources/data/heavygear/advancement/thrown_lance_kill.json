@@ -1,0 +1,30 @@
+{
+  "parent": "heavygear:lance_of_longinus",
+  "display": {
+    "icon": {
+      "count": 1,
+      "id": "heavygear:lance_of_longinus"
+    },
+    "title": {
+      "translate": "advancement.heavygear.thrown_lance_kill.title"
+    },
+    "description": {
+      "translate": "advancement.heavygear.thrown_lance_kill.description"
+    },
+    "frame": "task",
+    "show_toast": true,
+    "announce_to_chat": true,
+    "hidden": false
+  },
+  "criteria": {
+    "thrown_kill": {
+      "trigger": "minecraft:impossible"
+    }
+  },
+  "requirements": [
+    [
+      "thrown_kill"
+    ]
+  ],
+  "sends_telemetry_event": false
+}

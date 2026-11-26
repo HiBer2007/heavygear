@@ -1,0 +1,41 @@
+{
+  "parent": "minecraft:husbandry/plant_seed",
+  "display": {
+    "icon": {
+      "count": 1,
+      "id": "heavygear:heavy_hoe"
+    },
+    "title": {
+      "translate": "advancement.heavygear.final_offering.title"
+    },
+    "description": {
+      "translate": "advancement.heavygear.final_offering.description"
+    },
+    "frame": "challenge",
+    "show_toast": true,
+    "announce_to_chat": true,
+    "hidden": false
+  },
+  "criteria": {
+    "till_with_heavy_hoe": {
+      "trigger": "minecraft:item_used_on_block",
+      "conditions": {
+        "location": {
+          "condition": "minecraft:match_tool",
+          "predicate": {
+            "items": "heavygear:heavy_hoe"
+          }
+        }
+      }
+    }
+  },
+  "requirements": [
+    [
+      "till_with_heavy_hoe"
+    ]
+  ],
+  "rewards": {
+    "experience": 100
+  },
+  "sends_telemetry_event": false
+}

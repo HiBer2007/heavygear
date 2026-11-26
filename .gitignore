@@ -22,9 +22,13 @@ run/
 dist/
 *.jar
 !gradle/wrapper/gradle-wrapper.jar
+!**/gradle/wrapper/gradle-wrapper.jar
 # identity mappings jars used by the 26.x projects are part of the build, not deliverables
 !**/mappings/identity.jar
 
 # --- misc --------------------------------------------------------------------
 *.log
 logs/
+
+# --- local reference sources (decompiled 1.21.1 / NeoForge sources) ----------
+.reference/

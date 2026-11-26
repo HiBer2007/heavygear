@@ -1,0 +1,13 @@
+{
+  "values": [
+    "#minecraft:enchantable/mace",
+    "heavygear:heavy_helmet",
+    "heavygear:heavy_chestplate",
+    "heavygear:heavy_leggings",
+    "heavygear:heavy_boots",
+    "heavygear:heavy_bow",
+    "heavygear:heavy_crossbow",
+    "heavygear:heavy_fishing_rod",
+    "heavygear:ecam"
+  ]
+}

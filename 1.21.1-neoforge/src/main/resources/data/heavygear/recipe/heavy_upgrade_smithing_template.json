@@ -1,0 +1,18 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "misc",
+  "key": {
+    "B": "minecraft:breeze_rod",
+    "T": "heavygear:heavy_upgrade_smithing_template",
+    "C": "minecraft:heavy_core"
+  },
+  "pattern": [
+    "BTB",
+    "BCB",
+    "BBB"
+  ],
+  "result": {
+    "count": 2,
+    "id": "heavygear:heavy_upgrade_smithing_template"
+  }
+}

@@ -1,0 +1,30 @@
+{
+  "parent": "minecraft:adventure/minecraft_trials_edition",
+  "display": {
+    "icon": {
+      "count": 1,
+      "id": "heavygear:heavy_helmet"
+    },
+    "title": {
+      "translate": "advancement.heavygear.glide_smash_kill.title"
+    },
+    "description": {
+      "translate": "advancement.heavygear.glide_smash_kill.description"
+    },
+    "frame": "task",
+    "show_toast": true,
+    "announce_to_chat": true,
+    "hidden": false
+  },
+  "criteria": {
+    "glide_kill": {
+      "trigger": "minecraft:impossible"
+    }
+  },
+  "requirements": [
+    [
+      "glide_kill"
+    ]
+  ],
+  "sends_telemetry_event": false
+}

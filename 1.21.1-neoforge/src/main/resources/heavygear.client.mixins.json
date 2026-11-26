@@ -1,0 +1,12 @@
+{
+  "required": true,
+  "minVersion": "0.8.7",
+  "package": "com.cecilia.heavygear.mixin.client",
+  "compatibilityLevel": "JAVA_21",
+  "client": [
+    "ReleaseUsingItemMixin"
+  ],
+  "injectors": {
+    "defaultRequire": 1
+  }
+}

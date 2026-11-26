@@ -1,0 +1,9 @@
+{
+  "type": "minecraft:smithing_transform",
+  "template": "heavygear:heavy_upgrade_smithing_template",
+  "base": "minecraft:crossbow",
+  "addition": "minecraft:heavy_core",
+  "result": {
+    "id": "heavygear:heavy_crossbow"
+  }
+}

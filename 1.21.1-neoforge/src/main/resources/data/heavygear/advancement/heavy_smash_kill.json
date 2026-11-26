@@ -1,0 +1,30 @@
+{
+  "parent": "minecraft:adventure/minecraft_trials_edition",
+  "display": {
+    "icon": {
+      "count": 1,
+      "id": "heavygear:heavy_chestplate"
+    },
+    "title": {
+      "translate": "advancement.heavygear.heavy_smash_kill.title"
+    },
+    "description": {
+      "translate": "advancement.heavygear.heavy_smash_kill.description"
+    },
+    "frame": "task",
+    "show_toast": true,
+    "announce_to_chat": true,
+    "hidden": false
+  },
+  "criteria": {
+    "killed_by_heavy_armour": {
+      "trigger": "minecraft:impossible"
+    }
+  },
+  "requirements": [
+    [
+      "killed_by_heavy_armour"
+    ]
+  ],
+  "sends_telemetry_event": false
+}

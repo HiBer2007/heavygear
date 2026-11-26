@@ -1,0 +1,80 @@
+plugins {
+    id 'java-library'
+    id 'net.neoforged.moddev' version '2.0.141'
+}
+
+version = "${mod_version}+1.21.1"
+group = mod_group_id
+
+base {
+    archivesName = 'heavygear-neoforge'
+}
+
+java {
+    toolchain {
+        languageVersion = JavaLanguageVersion.of(21)
+    }
+}
+
+neoForge {
+    version = project.neo_version
+
+    parchment {
+        mappingsVersion = project.parchment_mappings_version
+        minecraftVersion = project.parchment_minecraft_version
+    }
+
+    // The port runs on the vanilla data pack formats of 1.21.1, so no access transformers are
+    // needed yet: everything the Fabric build did with mixin accessors is done with mixins here.
+    validateAccessTransformers = false
+
+    runs {
+        client {
+            client()
+        }
+        server {
+            server()
+            programArgument '--nogui'
+        }
+        configureEach {
+            logLevel = org.slf4j.event.Level.INFO
+        }
+    }
+
+    mods {
+        "${mod_id}" {
+            sourceSet(sourceSets.main)
+        }
+    }
+}
+
+// The shipped jar keeps the upstream naming scheme: heavygear-<mod version>+<mc version>.jar
+tasks.named('jar', Jar) {
+    archiveFileName = "heavygear-${mod_version}+1.21.1-neoforge.jar"
+}
+
+// neoforge.mods.toml carries ${...} placeholders that are expanded here.
+tasks.named('processResources', ProcessResources) {
+    filteringCharset = 'UTF-8'
+    def replaceProperties = [
+            minecraft_version      : minecraft_version,
+            minecraft_version_range: minecraft_version_range,
+            neo_version            : neo_version,
+            loader_version_range   : loader_version_range,
+            mod_id                 : mod_id,
+            mod_name               : mod_name,
+            mod_license            : mod_license,
+            mod_version            : mod_version,
+            mod_authors            : mod_authors,
+            mod_description        : mod_description,
+    ]
+    inputs.properties replaceProperties
+    filesMatching(['META-INF/neoforge.mods.toml']) {
+        expand replaceProperties
+    }
+}
+
+tasks.withType(JavaCompile).configureEach {
+    options.encoding = 'UTF-8'
+    options.release = 21
+}

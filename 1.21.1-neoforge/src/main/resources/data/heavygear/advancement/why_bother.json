@@ -1,0 +1,23 @@
+{
+  "parent": "minecraft:story/root",
+  "display": {
+    "icon": {
+      "id": "heavygear:ecam"
+    },
+    "title": {
+      "translate": "advancement.heavygear.why_bother.title"
+    },
+    "description": {
+      "translate": "advancement.heavygear.why_bother.description"
+    },
+    "frame": "task",
+    "show_toast": true,
+    "announce_to_chat": true,
+    "hidden": false
+  },
+  "criteria": {
+    "self_smash": {
+      "trigger": "minecraft:impossible"
+    }
+  }
+}

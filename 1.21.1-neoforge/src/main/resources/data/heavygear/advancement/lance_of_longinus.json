@@ -1,0 +1,40 @@
+{
+  "parent": "minecraft:adventure/minecraft_trials_edition",
+  "display": {
+    "icon": {
+      "count": 1,
+      "id": "heavygear:lance_of_longinus"
+    },
+    "title": {
+      "translate": "advancement.heavygear.lance_of_longinus.title"
+    },
+    "description": {
+      "translate": "advancement.heavygear.lance_of_longinus.description"
+    },
+    "frame": "challenge",
+    "show_toast": true,
+    "announce_to_chat": true,
+    "hidden": false
+  },
+  "criteria": {
+    "obtained": {
+      "trigger": "minecraft:inventory_changed",
+      "conditions": {
+        "items": [
+          {
+            "items": "heavygear:lance_of_longinus"
+          }
+        ]
+      }
+    }
+  },
+  "requirements": [
+    [
+      "obtained"
+    ]
+  ],
+  "rewards": {
+    "experience": 100
+  },
+  "sends_telemetry_event": false
+}

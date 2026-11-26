@@ -1,0 +1,9 @@
+{
+  "type": "minecraft:smithing_transform",
+  "template": "heavygear:trident_upgrade_smithing_template",
+  "base": "heavygear:heavy_spear",
+  "addition": "minecraft:trident",
+  "result": {
+    "id": "heavygear:lance_of_longinus"
+  }
+}

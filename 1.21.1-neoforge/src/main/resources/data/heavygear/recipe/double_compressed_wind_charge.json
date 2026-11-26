@@ -1,0 +1,15 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "misc",
+  "key": {
+    "W": "heavygear:compressed_wind_charge"
+  },
+  "pattern": [
+    "WW",
+    "WW"
+  ],
+  "result": {
+    "count": 1,
+    "id": "heavygear:double_compressed_wind_charge"
+  }
+}

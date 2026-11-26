@@ -1,0 +1,37 @@
+{
+  "parent": "minecraft:adventure/minecraft_trials_edition",
+  "display": {
+    "icon": {
+      "count": 1,
+      "id": "heavygear:heavy_spear"
+    },
+    "title": {
+      "translate": "advancement.heavygear.heavy_spear.title"
+    },
+    "description": {
+      "translate": "advancement.heavygear.heavy_spear.description"
+    },
+    "frame": "task",
+    "show_toast": true,
+    "announce_to_chat": true,
+    "hidden": false
+  },
+  "criteria": {
+    "obtained": {
+      "trigger": "minecraft:inventory_changed",
+      "conditions": {
+        "items": [
+          {
+            "items": "heavygear:heavy_spear"
+          }
+        ]
+      }
+    }
+  },
+  "requirements": [
+    [
+      "obtained"
+    ]
+  ],
+  "sends_telemetry_event": false
+}

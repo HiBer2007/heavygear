@@ -1,0 +1,48 @@
+// Standalone Gradle build for the NeoForge 1.21.1 port of Heavy Gear.
+// The Fabric multi-version build lives in the repository root; this build is intentionally
+// self-contained so it can be built without configuring the Fabric subprojects.
+
+pluginManagement {
+    repositories {
+        maven {
+            name = 'NeoForged'
+            url = 'https://neoforged.forgecdn.net/releases'
+        }
+        gradlePluginPortal()
+    }
+}
+
+rootProject.name = 'heavygear-neoforge'
+
+// ---------------------------------------------------------------------------------------------
+// Mirror rewriting.
+// maven.neoforged.net is not reachable from this machine, so every repository URL that the
+// ModDevGradle plugin registers at runtime is rewritten to the forgecdn mirror. The rewrite is
+// installed on the project repository collections, which means repositories added later (by the
+// plugin) are covered as well.
+// ---------------------------------------------------------------------------------------------
+def MIRRORS = [
+        'https://maven.neoforged.net'   : 'https://neoforged.forgecdn.net',
+        'https://maven.minecraftforge.net': 'https://maven.aliyun.com/repository/public',
+        'https://repo1.maven.org/maven2': 'https://maven.aliyun.com/repository/public',
+]
+
+def rewriteRepo = { repo ->
+    try {
+        if (repo instanceof org.gradle.api.artifacts.repositories.MavenArtifactRepository) {
+            def current = repo.url.toString()
+            MIRRORS.each { from, to ->
+                if (current.startsWith(from)) {
+                    repo.url = current.replace(from, to)
+                    logger.lifecycle("[mirror] {} -> {}", current, repo.url)
+                }
+            }
+        }
+    } catch (Throwable ignored) {
+    }
+}
+
+gradle.allprojects { p ->
+    p.repositories.all { rewriteRepo(it) }
+    p.buildscript.repositories.all { rewriteRepo(it) }
+}

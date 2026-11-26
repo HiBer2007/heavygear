@@ -1,0 +1,9 @@
+{
+  "type": "minecraft:smithing_transform",
+  "template": "heavygear:heavy_upgrade_smithing_template",
+  "base": "minecraft:netherite_hoe",
+  "addition": "minecraft:heavy_core",
+  "result": {
+    "id": "heavygear:heavy_hoe"
+  }
+}

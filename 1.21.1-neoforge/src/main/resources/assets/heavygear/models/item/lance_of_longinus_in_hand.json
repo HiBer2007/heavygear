@@ -1,0 +1,6 @@
+{
+  "parent": "minecraft:item/handheld",
+  "textures": {
+    "layer0": "heavygear:item/lance_of_longinus_in_hand"
+  }
+}

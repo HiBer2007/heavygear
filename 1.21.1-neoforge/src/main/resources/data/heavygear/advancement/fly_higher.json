@@ -1,0 +1,21 @@
+{
+  "display": {
+    "icon": {
+      "id": "heavygear:double_compressed_wind_charge"
+    },
+    "title": {
+      "translate": "advancement.heavygear.fly_higher.title"
+    },
+    "description": {
+      "translate": "advancement.heavygear.fly_higher.description"
+    },
+    "frame": "task",
+    "show_toast": true,
+    "announce_to_chat": true
+  },
+  "criteria": {
+    "impossible": {
+      "trigger": "minecraft:impossible"
+    }
+  }
+}
