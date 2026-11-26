@@ -91,33 +91,33 @@ public class LonginusSpearItem extends HeavySpearItem {
         if (charge < 10) {
             return;
         }
+        float spinStrength = EnchantmentHelper.getTridentSpinAttackStrength(stack, player);
         if (!level.isClientSide) {
             if (stack.getDamageValue() >= stack.getMaxDamage() - 1) {
                 return;
             }
             stack.hurtAndBreak(1, player, LivingEntity.getSlotForHand(player.getUsedItemHand()));
-            float spinStrength = EnchantmentHelper.getTridentSpinAttackStrength(stack, player);
+        }
+        // vanilla riptide dash: push the player along the look direction and start the spin attack
+        // (mirrors TridentItem#releaseUsing, which does this on both sides)
+        if (spinStrength > 0.0F) {
+            float f7 = player.getYRot();
+            float f1 = player.getXRot();
+            float f2 = -Mth.sin(f7 * (float) (Math.PI / 180.0)) * Mth.cos(f1 * (float) (Math.PI / 180.0));
+            float f3 = -Mth.sin(f1 * (float) (Math.PI / 180.0));
+            float f4 = Mth.cos(f7 * (float) (Math.PI / 180.0)) * Mth.cos(f1 * (float) (Math.PI / 180.0));
+            float f5 = Mth.sqrt(f2 * f2 + f3 * f3 + f4 * f4);
+            f2 *= spinStrength / f5;
+            f3 *= spinStrength / f5;
+            f4 *= spinStrength / f5;
+            player.push(f2, f3, f4);
+            player.startAutoSpinAttack(20, 8.0F, stack);
+            if (player.onGround()) {
+                player.move(MoverType.SELF, new Vec3(0.0, 1.1999999F, 0.0));
+            }
             Holder<SoundEvent> sound = EnchantmentHelper.pickHighestLevel(stack, EnchantmentEffectComponents.TRIDENT_SOUND)
                     .orElse(SoundEvents.TRIDENT_THROW);
-            // vanilla riptide dash: push the player along the look direction and start the spin attack
-            if (spinStrength > 0.0F) {
-                float f7 = player.getYRot();
-                float f1 = player.getXRot();
-                float f2 = -Mth.sin(f7 * (float) (Math.PI / 180.0)) * Mth.cos(f1 * (float) (Math.PI / 180.0));
-                float f3 = -Mth.sin(f1 * (float) (Math.PI / 180.0));
-                float f4 = Mth.cos(f7 * (float) (Math.PI / 180.0)) * Mth.cos(f1 * (float) (Math.PI / 180.0));
-                float f5 = Mth.sqrt(f2 * f2 + f3 * f3 + f4 * f4);
-                f2 *= spinStrength / f5;
-                f3 *= spinStrength / f5;
-                f4 *= spinStrength / f5;
-                player.push(f2, f3, f4);
-                player.startAutoSpinAttack(20, 8.0F, stack);
-                if (player.onGround()) {
-                    player.move(MoverType.SELF, new Vec3(0.0, 1.1999999F, 0.0));
-                }
-                SoundEvent event = sound.value();
-                level.playSound(null, player, event, SoundSource.PLAYERS, 1.0F, 1.0F);
-            }
+            level.playSound(null, player, sound.value(), SoundSource.PLAYERS, 1.0F, 1.0F);
         }
         player.awardStat(Stats.ITEM_USED.get(this));
     }
